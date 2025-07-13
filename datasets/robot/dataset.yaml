@@ -1,0 +1,23 @@
+# Ultralytics YOLO 🚀, AGPL-3.0 license
+# COCO8 dataset (first 8 images from COCO train2017) by Ultralytics
+# Documentation: https://docs.ultralytics.com/datasets/detect/coco8/
+# Example usage: yolo train data=coco8.yaml
+# parent
+# ├── ultralytics
+# └── datasets
+#     └── coco8  ← downloads here (1 MB)
+
+# Custom Dataset YAML for Fine-tuning
+
+# Path to your dataset root directory
+path: /Users/jarvis/Desktop/project/datasets/robot
+
+# Train, validation, and test images directories
+train: images/train
+val: images/val
+test:  # Optional
+
+# Classes (including the new 'cool' class as class 80)
+names:
+  0: robot
+

@@ -1,0 +1,184 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>End-to-End Machine Learning Pipeline for Distance Estimation and Human-Robot Interaction in Autonomous Systems &mdash; End-to-End Machine Learning Pipeline for Distance Estimation and Human-Robot Interaction in Autonomous Systems 1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d75fae25" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=f5c5cf6b" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=29a6c3e3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction" href="introduction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            End-to-End Machine Learning Pipeline for Distance Estimation and Human-Robot Interaction in Autonomous Systems
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment_setup.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_preprocessing.html">Data Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_training.html">Model Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rosbag_to_video.html">ROS Bag to Video Conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distance_angle_estimation.html">Distance and Angle Estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation_visualization.html">Evaluation Visualization</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">End-to-End Machine Learning Pipeline for Distance Estimation and Human-Robot Interaction in Autonomous Systems</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">End-to-End Machine Learning Pipeline for Distance Estimation and Human-Robot Interaction in Autonomous Systems</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="end-to-end-machine-learning-pipeline-for-distance-estimation-and-human-robot-interaction-in-autonomous-systems">
+<h1>End-to-End Machine Learning Pipeline for Distance Estimation and Human-Robot Interaction in Autonomous Systems<a class="headerlink" href="#end-to-end-machine-learning-pipeline-for-distance-estimation-and-human-robot-interaction-in-autonomous-systems" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment_setup.html">Environment Setup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="environment_setup.html#check-python-installation">1 - Check Python Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="environment_setup.html#create-a-virtual-environment">2 - Create a Virtual Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="environment_setup.html#activate-the-virtual-environment">3 - Activate the Virtual Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="environment_setup.html#install-dependencies-from-requirements-txt">4 - Install Dependencies from requirements.txt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="environment_setup.html#setting-up-docker-for-ros-bag-playback">5 - Setting Up Docker for ROS Bag Playback</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="requirements.html#python-version">1. Python Version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="requirements.html#virtual-environment-setup">2. Virtual Environment Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="requirements.html#required-python-packages">3. Required Python Packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="requirements.html#docker-for-ros-bag-processing">4. Docker for ROS Bag Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="requirements.html#ros-inside-docker">5. ROS Inside Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="requirements.html#optional-for-developers">6. Optional (for developers)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data_preprocessing.html">Data Preprocessing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_preprocessing.html#dataset-structure-and-directory-layout">1 - Dataset Structure and Directory Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_preprocessing.html#annotation-using-labelme">2 - Annotation Using LabelMe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_preprocessing.html#image-normalization-and-resizing">3 - Image Normalization and Resizing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_preprocessing.html#frame-extraction-from-video">4 - Frame Extraction from Video</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_preprocessing.html#data-augmentation-techniques">5 - Data Augmentation Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_preprocessing.html#data-validation">6 - Data Validation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model_training.html">Model Training</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model_training.html#dataset-preparation-and-configuration"><strong>1 - Dataset Preparation and Configuration</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_training.html#model-selection-and-transfer-learning-strategy"><strong>2 - Model Selection and Transfer Learning Strategy</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_training.html#training-environment-setup"><strong>3 - Training Environment Setup</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_training.html#monitoring-training-metrics"><strong>4 - Monitoring Training Metrics</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_training.html#exporting-the-trained-model"><strong>5 - Exporting the Trained Model</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_training.html#evaluate-model-on-validation-data"><strong>6 - Evaluate Model on Validation Data</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rosbag_to_video.html">ROS Bag to Video Conversion</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rosbag_to_video.html#verify-external-hard-drive-mount">1 - Verify External Hard Drive Mount</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rosbag_to_video.html#create-and-launch-docker-container">2 - Create and Launch Docker Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rosbag_to_video.html#install-ros-tools-in-container">3 - Install ROS Tools in Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rosbag_to_video.html#check-ros-bag-info">4 - Check ROS Bag Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rosbag_to_video.html#start-ros-core-and-play-bag-file">5 - Start ROS Core and Play Bag File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rosbag_to_video.html#extract-images-from-ros-bag">6 - Extract Images from ROS Bag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rosbag_to_video.html#convert-extracted-images-to-video">7 - Convert Extracted Images to Video</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rosbag_to_video.html#copy-video-to-host-system">8 - Copy Video to Host System</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distance_angle_estimation.html">Distance and Angle Estimation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="distance_angle_estimation.html#dual-yolo-model-architecture">1. Dual YOLO Model Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distance_angle_estimation.html#realsense-video-input-handling">2. RealSense Video Input Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distance_angle_estimation.html#camera-to-person-distance-estimation">3. Camera-to-Person Distance Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distance_angle_estimation.html#angle-estimation-logic">4. Angle Estimation Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distance_angle_estimation.html#robot-localization-using-person-id">5. Robot Localization using Person ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distance_angle_estimation.html#filtering-and-validation-rules">6. Filtering and Validation Rules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation_visualization.html">Evaluation Visualization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="evaluation_visualization.html#csv-output-structure-and-logging-logic">1. CSV Output Structure and Logging Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation_visualization.html#plotly-visualization-with-danger-zones">2. Plotly Visualization with Danger Zones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation_visualization.html#hover-tooltips-for-tracking-analysis">3. Hover Tooltips for Tracking Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation_visualization.html#smoothing-logic-with-moving-average">4. Smoothing Logic with Moving Average</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation_visualization.html#summary-of-visualization-logic">5. Summary of Visualization Logic</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="introduction.html" class="btn btn-neutral float-right" title="Introduction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, MD ASLAM ANSARI.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

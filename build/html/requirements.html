@@ -1,0 +1,201 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Requirements &mdash; End-to-End Machine Learning Pipeline for Distance Estimation and Human-Robot Interaction in Autonomous Systems 1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d75fae25" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=f5c5cf6b" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=29a6c3e3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Data Preprocessing" href="data_preprocessing.html" />
+    <link rel="prev" title="Environment Setup" href="environment_setup.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            End-to-End Machine Learning Pipeline for Distance Estimation and Human-Robot Interaction in Autonomous Systems
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment_setup.html">Environment Setup</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Requirements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#python-version">1. Python Version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#virtual-environment-setup">2. Virtual Environment Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#required-python-packages">3. Required Python Packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#docker-for-ros-bag-processing">4. Docker for ROS Bag Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ros-inside-docker">5. ROS Inside Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-for-developers">6. Optional (for developers)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data_preprocessing.html">Data Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_training.html">Model Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rosbag_to_video.html">ROS Bag to Video Conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distance_angle_estimation.html">Distance and Angle Estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation_visualization.html">Evaluation Visualization</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">End-to-End Machine Learning Pipeline for Distance Estimation and Human-Robot Interaction in Autonomous Systems</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Requirements</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/requirements.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="requirements">
+<h1>Requirements<a class="headerlink" href="#requirements" title="Link to this heading"></a></h1>
+<p>This section provides the complete list of Python libraries, package versions, and system tools required to run the distance-angle estimation and ROS-to-video pipeline.</p>
+<p>—</p>
+<section id="python-version">
+<h2>1. Python Version<a class="headerlink" href="#python-version" title="Link to this heading"></a></h2>
+<p>The codebase is tested with:</p>
+<ul class="simple">
+<li><p>Python 3.10+</p></li>
+</ul>
+<p>To check your Python version:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>--version
+</pre></div>
+</div>
+<p>—</p>
+</section>
+<section id="virtual-environment-setup">
+<h2>2. Virtual Environment Setup<a class="headerlink" href="#virtual-environment-setup" title="Link to this heading"></a></h2>
+<p>Before installing packages, it’s recommended to create a virtual environment:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+</pre></div>
+</div>
+<p>—</p>
+</section>
+<section id="required-python-packages">
+<h2>3. Required Python Packages<a class="headerlink" href="#required-python-packages" title="Link to this heading"></a></h2>
+<p>Install the following Python packages using <cite>pip</cite>:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>ultralytics<span class="w"> </span>opencv-python<span class="w"> </span>numpy<span class="w"> </span>pandas<span class="w"> </span>plotly<span class="w"> </span>scipy
+</pre></div>
+</div>
+<p>To save these in <cite>requirements.txt</cite>:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>freeze<span class="w"> </span>&gt;<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+<p>—</p>
+</section>
+<section id="docker-for-ros-bag-processing">
+<h2>4. Docker for ROS Bag Processing<a class="headerlink" href="#docker-for-ros-bag-processing" title="Link to this heading"></a></h2>
+<p>Ensure Docker is installed and running. Pull the ROS image used for bag conversion:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>osrf/ros:noetic-desktop-full
+</pre></div>
+</div>
+<p>Check Docker is working:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>--version
+</pre></div>
+</div>
+<p>—</p>
+</section>
+<section id="ros-inside-docker">
+<h2>5. ROS Inside Docker<a class="headerlink" href="#ros-inside-docker" title="Link to this heading"></a></h2>
+<p>No native ROS installation is needed on the host. All ROS-related tasks (bag play, image extraction) run inside the Docker container.</p>
+<p>Mount the external disk using:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--name<span class="w"> </span>ros_container<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--mount<span class="w"> </span><span class="nv">type</span><span class="o">=</span>bind,source<span class="o">=</span>/Volumes/One_Touch,target<span class="o">=</span>/rosbag_data<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>osrf/ros:noetic-desktop-full
+</pre></div>
+</div>
+<p>—</p>
+</section>
+<section id="optional-for-developers">
+<h2>6. Optional (for developers)<a class="headerlink" href="#optional-for-developers" title="Link to this heading"></a></h2>
+<p>For linting and development:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>black<span class="w"> </span>isort<span class="w"> </span>flake8
+</pre></div>
+</div>
+<p>—</p>
+<blockquote>
+<div><p>Purpose of <cite>requirements.rst</cite></p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Helps <strong>you or any user</strong> recreate the same environment.</p></li>
+<li><p>Keeps the setup <strong>clean, version-controlled, and OS-independent</strong>.</p></li>
+<li><p>Ensures the Docker+Python pipeline runs end-to-end without manual guesswork.</p></li>
+</ul>
+<p>—</p>
+<p>Would you like me to generate the full <cite>.rst</cite> file now named <cite>requirements.rst</cite> using all your formatting rules?</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="environment_setup.html" class="btn btn-neutral float-left" title="Environment Setup" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="data_preprocessing.html" class="btn btn-neutral float-right" title="Data Preprocessing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, MD ASLAM ANSARI.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

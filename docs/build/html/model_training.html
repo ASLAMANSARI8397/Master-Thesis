@@ -1,0 +1,209 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Model Training &mdash; End-to-End Machine Learning Pipeline forDistance Estimation and Human-RobotInteraction in Autonomous Systems 1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=29a6c3e3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ROS Bag to Video Conversion" href="ros_bag_conversion.html" />
+    <link rel="prev" title="Data Preprocessing" href="data_preprocessing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            End-to-End Machine Learning Pipeline forDistance Estimation and Human-RobotInteraction in Autonomous Systems
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="environment_setup.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_preprocessing.html">Data Preprocessing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Model Training</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dataset-preparation-and-configuration">1 - Dataset Preparation and Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-selection-and-transfer-learning-strategy">2 - Model Selection and Transfer Learning Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#training-environment-setup">3 - Training Environment Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#monitoring-training-metrics">4 - Monitoring Training Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exporting-the-trained-model">5 - Exporting the Trained Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluate-model-on-validation-data">6 - Evaluate Model on Validation Data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ros_bag_conversion.html">ROS Bag to Video Conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distance_angle_estimation.html">Distance and Angle Estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation_visualization.html">Evaluation and Visualization</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">End-to-End Machine Learning Pipeline forDistance Estimation and Human-RobotInteraction in Autonomous Systems</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Model Training</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/model_training.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="model-training">
+<h1>Model Training<a class="headerlink" href="#model-training" title="Link to this heading"></a></h1>
+<p>This section explains in detail how the object detection model was trained for the distance and angle estimation system. The process includes dataset preparation, transfer learning using YOLOv8, configuration settings, training execution, and evaluation.</p>
+<section id="dataset-preparation-and-configuration">
+<h2>1 - Dataset Preparation and Configuration<a class="headerlink" href="#dataset-preparation-and-configuration" title="Link to this heading"></a></h2>
+<p>Before training, the dataset must be structured according to YOLO format:</p>
+<ul class="simple">
+<li><p>Images are stored in:
+- /images/train
+- /images/val</p></li>
+<li><p>Corresponding labels in:
+- /labels/train
+- /labels/val</p></li>
+</ul>
+<p>Each label file is a <cite>.txt</cite> file containing bounding boxes and class IDs in YOLO format.</p>
+<p>Create a configuration file called <cite>dataset.yaml</cite> with the following structure:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/absolute/path/to/dataset</span>
+<span class="nt">train</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">images/train</span>
+<span class="nt">val</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">images/val</span>
+<span class="nt">nc</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="nt">names</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;person&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;robot&#39;</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>Here:
+- <cite>nc</cite> is the number of classes.
+- <cite>names</cite> must match the class indices used during annotation.</p>
+</section>
+<section id="model-selection-and-transfer-learning-strategy">
+<h2>2 - Model Selection and Transfer Learning Strategy<a class="headerlink" href="#model-selection-and-transfer-learning-strategy" title="Link to this heading"></a></h2>
+<p>We use YOLOv8 (You Only Look Once version 8) from the <cite>ultralytics</cite> package for object detection due to its lightweight architecture and real-time performance.</p>
+<p>Instead of training from scratch, transfer learning is applied using a pre-trained base model:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>yolo<span class="w"> </span><span class="nv">task</span><span class="o">=</span>detect<span class="w"> </span><span class="nv">mode</span><span class="o">=</span>train<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">model</span><span class="o">=</span>robot.pt<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">data</span><span class="o">=</span>dataset.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">epochs</span><span class="o">=</span><span class="m">50</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">imgsz</span><span class="o">=</span><span class="m">640</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">batch</span><span class="o">=</span><span class="m">16</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">name</span><span class="o">=</span>yolov8_robot_train
+</pre></div>
+</div>
+<p>Here:
+- <cite>robot.pt</cite> is the checkpoint trained on a similar robotics dataset.
+- <cite>dataset.yaml</cite> provides training and validation splits.
+- <cite>imgsz</cite> controls input resolution.
+- <cite>batch</cite> is tuned based on available GPU memory.</p>
+</section>
+<section id="training-environment-setup">
+<h2>3 - Training Environment Setup<a class="headerlink" href="#training-environment-setup" title="Link to this heading"></a></h2>
+<p>Make sure you’re running training inside a virtual environment with <cite>ultralytics</cite> installed.</p>
+<p>Activate your environment and navigate to the training folder.
+Use the following command to install the training library if not already present:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>ultralytics
+</pre></div>
+</div>
+<p>If GPU support is enabled, ensure CUDA drivers are installed. Training will auto-switch to GPU if available.</p>
+</section>
+<section id="monitoring-training-metrics">
+<h2>4 - Monitoring Training Metrics<a class="headerlink" href="#monitoring-training-metrics" title="Link to this heading"></a></h2>
+<p>The training process outputs real-time metrics like:
+- Box loss
+- Class loss
+- <a class="reference external" href="mailto:mAP&#37;&#52;&#48;0&#46;5">mAP<span>&#64;</span>0<span>&#46;</span>5</a>
+- Precision / Recall</p>
+<p>After training, results will be available in the <cite>runs/detect/yolov8_robot_train</cite> folder.</p>
+<p>To visualize training curves:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>tensorboard<span class="w"> </span>--logdir<span class="w"> </span>runs/detect
+</pre></div>
+</div>
+<p>Open your browser at <cite>http://localhost:6006</cite> to view the metrics.</p>
+</section>
+<section id="exporting-the-trained-model">
+<h2>5 - Exporting the Trained Model<a class="headerlink" href="#exporting-the-trained-model" title="Link to this heading"></a></h2>
+<p>Once training is complete, export the best model weights as follows:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>yolo<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">model</span><span class="o">=</span>runs/detect/yolov8_robot_train/weights/best.pt<span class="w"> </span><span class="nv">format</span><span class="o">=</span>onnx
+</pre></div>
+</div>
+<p>This converts the PyTorch weights to ONNX for easier integration into ROS or other environments.</p>
+</section>
+<section id="evaluate-model-on-validation-data">
+<h2>6 - Evaluate Model on Validation Data<a class="headerlink" href="#evaluate-model-on-validation-data" title="Link to this heading"></a></h2>
+<p>To test the trained model on new data:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>yolo<span class="w"> </span><span class="nv">task</span><span class="o">=</span>detect<span class="w"> </span><span class="nv">mode</span><span class="o">=</span>val<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">model</span><span class="o">=</span>runs/detect/yolov8_robot_train/weights/best.pt<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">data</span><span class="o">=</span>dataset.yaml
+</pre></div>
+</div>
+<p>You will receive evaluation metrics including mAP, precision, and recall.</p>
+<p>This concludes the full training workflow for your real-time detection system.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="data_preprocessing.html" class="btn btn-neutral float-left" title="Data Preprocessing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ros_bag_conversion.html" class="btn btn-neutral float-right" title="ROS Bag to Video Conversion" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, MD ASLAM ANSARI.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

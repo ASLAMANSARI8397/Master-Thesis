@@ -1,0 +1,216 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ROS Bag to Video Conversion &mdash; End-to-End Machine Learning Pipeline forDistance Estimation and Human-RobotInteraction in Autonomous Systems 1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=29a6c3e3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Distance and Angle Estimation" href="distance_angle_estimation.html" />
+    <link rel="prev" title="Model Training" href="model_training.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            End-to-End Machine Learning Pipeline forDistance Estimation and Human-RobotInteraction in Autonomous Systems
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="environment_setup.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_preprocessing.html">Data Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_training.html">Model Training</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ROS Bag to Video Conversion</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#verify-external-hard-drive-mount">1. Verify External Hard Drive Mount</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-and-launch-docker-container">2. Create and Launch Docker Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-ros-tools-in-container">3. Install ROS Tools in Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#check-ros-bag-info">4. Check ROS Bag Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#start-ros-core-and-play-bag-file">5. Start ROS Core and Play Bag File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extract-images-from-ros-bag">6. Extract Images from ROS Bag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#convert-extracted-images-to-video">7. Convert Extracted Images to Video</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#copy-video-to-host-system">8. Copy Video to Host System</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distance_angle_estimation.html">Distance and Angle Estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation_visualization.html">Evaluation and Visualization</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">End-to-End Machine Learning Pipeline forDistance Estimation and Human-RobotInteraction in Autonomous Systems</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">ROS Bag to Video Conversion</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ros_bag_conversion.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ros-bag-to-video-conversion">
+<h1>ROS Bag to Video Conversion<a class="headerlink" href="#ros-bag-to-video-conversion" title="Link to this heading"></a></h1>
+<p>This section provides a complete guide to extract image frames from a <cite>.bag</cite> file and convert them into a playable video using ROS tools. The workflow is tailored for macOS with Docker and supports <cite>.bag</cite> files stored on an external hard drive.</p>
+<section id="verify-external-hard-drive-mount">
+<h2>1. Verify External Hard Drive Mount<a class="headerlink" href="#verify-external-hard-drive-mount" title="Link to this heading"></a></h2>
+<p>Ensure your external drive (e.g., <cite>One_Touch</cite>) is mounted. To check available drives, run:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>ls<span class="w"> </span>/Volumes
+</pre></div>
+</div>
+<p>You should see your external drive listed, such as:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>One_Touch
+</pre></div>
+</div>
+</section>
+<section id="create-and-launch-docker-container">
+<h2>2. Create and Launch Docker Container<a class="headerlink" href="#create-and-launch-docker-container" title="Link to this heading"></a></h2>
+<p>Mount your external drive into the Docker container at <cite>/rosbag_data</cite>:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--name<span class="w"> </span>ros_container<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--mount<span class="w"> </span><span class="nv">type</span><span class="o">=</span>bind,source<span class="o">=</span>/Volumes/One_Touch,target<span class="o">=</span>/rosbag_data<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>ros:noetic
+</pre></div>
+</div>
+<p>This launches a container named <cite>ros_container</cite> and mounts your external hard drive into it.</p>
+</section>
+<section id="install-ros-tools-in-container">
+<h2>3. Install ROS Tools in Container<a class="headerlink" href="#install-ros-tools-in-container" title="Link to this heading"></a></h2>
+<p>Once inside the container, install the tools for image extraction and video conversion:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>apt<span class="w"> </span>update
+apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>ros-noetic-image-view<span class="w"> </span>ffmpeg
+</pre></div>
+</div>
+<p>To persist the ROS environment across sessions:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;source /opt/ros/noetic/setup.bash&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+<span class="nb">source</span><span class="w"> </span>~/.bashrc
+</pre></div>
+</div>
+</section>
+<section id="check-ros-bag-info">
+<h2>4. Check ROS Bag Info<a class="headerlink" href="#check-ros-bag-info" title="Link to this heading"></a></h2>
+<p>Use <cite>rosbag info</cite> to inspect the file and confirm the image topic:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>rosbag<span class="w"> </span>info<span class="w"> </span>/rosbag_data/your_file.bag
+</pre></div>
+</div>
+<p>Look for the correct topic such as <cite>/camera/image_raw</cite>.</p>
+</section>
+<section id="start-ros-core-and-play-bag-file">
+<h2>5. Start ROS Core and Play Bag File<a class="headerlink" href="#start-ros-core-and-play-bag-file" title="Link to this heading"></a></h2>
+<p>In <strong>Terminal #1</strong> (Docker container):</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>roscore
+</pre></div>
+</div>
+<p>In <strong>Terminal #2</strong> (another Docker terminal):</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>rosbag<span class="w"> </span>play<span class="w"> </span>/rosbag_data/your_file.bag<span class="w"> </span>--clock
+</pre></div>
+</div>
+</section>
+<section id="extract-images-from-ros-bag">
+<h2>6. Extract Images from ROS Bag<a class="headerlink" href="#extract-images-from-ros-bag" title="Link to this heading"></a></h2>
+<p>In <strong>Terminal #3</strong> (same Docker container), create output folder:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>/rosbag_data/output_images
+</pre></div>
+</div>
+<p>Run the image extraction tool:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>rosrun<span class="w"> </span>image_view<span class="w"> </span>extract_images<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>_filename_format:<span class="o">=</span>frame%04d.jpg<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>image:<span class="o">=</span>/camera/image_raw<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>_sec_per_frame:<span class="o">=</span><span class="m">0</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>_output_folder:<span class="o">=</span>/rosbag_data/output_images
+</pre></div>
+</div>
+<p>This will save all frames from the <cite>.bag</cite> file as images.</p>
+</section>
+<section id="convert-extracted-images-to-video">
+<h2>7. Convert Extracted Images to Video<a class="headerlink" href="#convert-extracted-images-to-video" title="Link to this heading"></a></h2>
+<p>Use <cite>ffmpeg</cite> to convert extracted frames into a video:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/rosbag_data/output_images
+ffmpeg<span class="w"> </span>-framerate<span class="w"> </span><span class="m">10</span><span class="w"> </span>-i<span class="w"> </span>frame%04d.jpg<span class="w"> </span>-c:v<span class="w"> </span>libx264<span class="w"> </span>-pix_fmt<span class="w"> </span>yuv420p<span class="w"> </span>output_video.mp4
+</pre></div>
+</div>
+<p>This creates <cite>output_video.mp4</cite> from the extracted frames.</p>
+</section>
+<section id="copy-video-to-host-system">
+<h2>8. Copy Video to Host System<a class="headerlink" href="#copy-video-to-host-system" title="Link to this heading"></a></h2>
+<p>To copy the video file from the container to your host macOS system:</p>
+<p>In a new macOS terminal, find the container ID:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>ps
+</pre></div>
+</div>
+<p>Then use:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>cp<span class="w"> </span>ros_container:/rosbag_data/output_images/output_video.mp4<span class="w"> </span>~/Desktop/
+</pre></div>
+</div>
+<p>This copies the video to your Desktop.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="model_training.html" class="btn btn-neutral float-left" title="Model Training" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="distance_angle_estimation.html" class="btn btn-neutral float-right" title="Distance and Angle Estimation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, MD ASLAM ANSARI.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,230 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Distance and Angle Estimation &mdash; End-to-End Machine Learning Pipeline forDistance Estimation and Human-RobotInteraction in Autonomous Systems 1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=29a6c3e3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Evaluation and Visualization" href="evaluation_visualization.html" />
+    <link rel="prev" title="ROS Bag to Video Conversion" href="ros_bag_conversion.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            End-to-End Machine Learning Pipeline forDistance Estimation and Human-RobotInteraction in Autonomous Systems
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="environment_setup.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_preprocessing.html">Data Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_training.html">Model Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ros_bag_conversion.html">ROS Bag to Video Conversion</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Distance and Angle Estimation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dual-yolo-model-architecture">1. Dual YOLO Model Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#realsense-video-input-handling">2. RealSense Video Input Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#camera-to-person-distance-estimation">3. Camera-to-Person Distance Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#angle-estimation-logic">4. Angle Estimation Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#robot-localization-using-person-id">5. Robot Localization using Person ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filtering-and-validation-rules">6. Filtering and Validation Rules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation_visualization.html">Evaluation and Visualization</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">End-to-End Machine Learning Pipeline forDistance Estimation and Human-RobotInteraction in Autonomous Systems</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Distance and Angle Estimation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/distance_angle_estimation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="distance-and-angle-estimation">
+<h1>Distance and Angle Estimation<a class="headerlink" href="#distance-and-angle-estimation" title="Link to this heading"></a></h1>
+<p>This section explains the complete logic behind estimating both camera-to-person distance and person-to-robot spatial angle using RealSense video input. The system uses two YOLO models simultaneously to detect humans and robots in each frame, enabling real-time spatial awareness.</p>
+<p>All steps are implemented using Python, OpenCV, NumPy, and a depth data file extracted from RealSense camera (.npy). This module is standalone and does not require any webcam or ROS install.</p>
+<section id="dual-yolo-model-architecture">
+<h2>1. Dual YOLO Model Architecture<a class="headerlink" href="#dual-yolo-model-architecture" title="Link to this heading"></a></h2>
+<p>To differentiate between people and robots, the system runs two YOLOv8 models in parallel:</p>
+<ul class="simple">
+<li><p>One model trained to detect person class (e.g., yolov8n.pt)</p></li>
+<li><p>One fine-tuned YOLO model trained to detect robots (e.g., robot.pt)</p></li>
+</ul>
+<p>Each model processes the same RealSense video frame in every iteration.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ultralytics</span><span class="w"> </span><span class="kn">import</span> <span class="n">YOLO</span>
+<span class="n">person_model</span> <span class="o">=</span> <span class="n">YOLO</span><span class="p">(</span><span class="s2">&quot;yolov8n.pt&quot;</span><span class="p">)</span>  <span class="c1"># Detects humans</span>
+<span class="n">robot_model</span> <span class="o">=</span> <span class="n">YOLO</span><span class="p">(</span><span class="s2">&quot;robot.pt&quot;</span><span class="p">)</span>      <span class="c1"># Detects robots</span>
+</pre></div>
+</div>
+</section>
+<section id="realsense-video-input-handling">
+<h2>2. RealSense Video Input Handling<a class="headerlink" href="#realsense-video-input-handling" title="Link to this heading"></a></h2>
+<p>Instead of a webcam, this module uses a pre-recorded RealSense video file (e.g., .mp4) and a corresponding depth map in <cite>.npy</cite> format extracted frame-wise.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="s2">&quot;input_video.mp4&quot;</span><span class="p">)</span>
+<span class="n">depth_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;depth_array.npy&quot;</span><span class="p">)</span>  <span class="c1"># Shape: (N, H, W)</span>
+</pre></div>
+</div>
+<p>Each frame from cap.read() is paired with a depth map from the .npy file for accurate spatial estimation.</p>
+</section>
+<section id="camera-to-person-distance-estimation">
+<h2>3. Camera-to-Person Distance Estimation<a class="headerlink" href="#camera-to-person-distance-estimation" title="Link to this heading"></a></h2>
+<p>To estimate the distance from the camera to a person:</p>
+<ul class="simple">
+<li><p>Use the bounding box center (cx, cy) of each detected person.</p></li>
+<li><p>Extract the depth value from the RealSense .npy array at that pixel.</p></li>
+<li><p>Ignore any zero or extreme values using filtering.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">x1</span> <span class="o">+</span> <span class="n">x2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">cy</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">y1</span> <span class="o">+</span> <span class="n">y2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">raw_distance</span> <span class="o">=</span> <span class="n">depth_data</span><span class="p">[</span><span class="n">frame_idx</span><span class="p">][</span><span class="n">cy</span><span class="p">][</span><span class="n">cx</span><span class="p">]</span>
+<span class="k">if</span> <span class="mi">20</span> <span class="o">&lt;</span> <span class="n">raw_distance</span> <span class="o">&lt;</span> <span class="mi">400</span><span class="p">:</span>  <span class="c1"># cm</span>
+    <span class="n">final_distance</span> <span class="o">=</span> <span class="n">raw_distance</span>
+</pre></div>
+</div>
+<p>The result is a stable, per-person distance from the camera.</p>
+</section>
+<section id="angle-estimation-logic">
+<h2>4. Angle Estimation Logic<a class="headerlink" href="#angle-estimation-logic" title="Link to this heading"></a></h2>
+<p>The horizontal angle between the detected person and the camera center is computed using focal length and pixel offset.</p>
+<p>The formula:</p>
+<div class="math notranslate nohighlight">
+\[\theta = \arctan\left( \frac{x - c_x}{f_x} \right)\]</div>
+<p>Where:
+- <span class="math notranslate nohighlight">\(x\)</span> is the x-coordinate of bounding box center
+- <span class="math notranslate nohighlight">\(c_x\)</span> is the image center in x-axis (frame.shape[1] / 2)
+- <span class="math notranslate nohighlight">\(f_x\)</span> is focal length in pixels (RealSense: e.g., 604.8672)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fx</span> <span class="o">=</span> <span class="mf">604.8672</span>
+<span class="n">image_center_x</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">((</span><span class="n">cx</span> <span class="o">-</span> <span class="n">image_center_x</span><span class="p">)</span> <span class="o">/</span> <span class="n">fx</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This gives angle in degrees, with negative = left, positive = right.</p>
+</section>
+<section id="robot-localization-using-person-id">
+<h2>5. Robot Localization using Person ID<a class="headerlink" href="#robot-localization-using-person-id" title="Link to this heading"></a></h2>
+<p>Once both persons and robots are detected in a frame:</p>
+<ul class="simple">
+<li><p>Assign each detection a unique ID using position tracking.</p></li>
+<li><p>Map each robot to the nearest person in angle space (same frame).</p></li>
+<li><p>Calculate the relative angle and distance between person and robot.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">distance</span>
+<span class="k">for</span> <span class="n">robot</span> <span class="ow">in</span> <span class="n">robots</span><span class="p">:</span>
+    <span class="n">r_angle</span> <span class="o">=</span> <span class="n">robot</span><span class="p">[</span><span class="s2">&quot;angle&quot;</span><span class="p">]</span>
+    <span class="n">nearest_person</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">persons</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;angle&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">r_angle</span><span class="p">))</span>
+    <span class="n">dist_cm</span> <span class="o">=</span> <span class="n">distance</span><span class="o">.</span><span class="n">euclidean</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">robot</span><span class="p">[</span><span class="s2">&quot;cx&quot;</span><span class="p">],</span> <span class="n">robot</span><span class="p">[</span><span class="s2">&quot;cy&quot;</span><span class="p">]),</span> <span class="p">(</span><span class="n">nearest_person</span><span class="p">[</span><span class="s2">&quot;cx&quot;</span><span class="p">],</span> <span class="n">nearest_person</span><span class="p">[</span><span class="s2">&quot;cy&quot;</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">dist_cm</span> <span class="o">&lt;</span> <span class="n">MAX_VALID_DISTANCE</span><span class="p">:</span>
+        <span class="c1"># Log person-robot proximity</span>
+        <span class="n">spatial_map</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">&quot;frame&quot;</span><span class="p">:</span> <span class="n">frame_idx</span><span class="p">,</span>
+            <span class="s2">&quot;person_id&quot;</span><span class="p">:</span> <span class="n">nearest_person</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;robot_id&quot;</span><span class="p">:</span> <span class="n">robot</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;angle&quot;</span><span class="p">:</span> <span class="n">r_angle</span><span class="p">,</span>
+            <span class="s2">&quot;distance&quot;</span><span class="p">:</span> <span class="n">dist_cm</span>
+        <span class="p">})</span>
+</pre></div>
+</div>
+<p>This logic allows continuous tracking of person-robot spatial relations.</p>
+</section>
+<section id="filtering-and-validation-rules">
+<h2>6. Filtering and Validation Rules<a class="headerlink" href="#filtering-and-validation-rules" title="Link to this heading"></a></h2>
+<p>To improve real-time usability, the following filtering steps are applied:</p>
+<ul class="simple">
+<li><p>Discard frames where no valid depth is found (depth == 0 or &gt; 500cm).</p></li>
+<li><p>Filter out boxes that are too small or have abnormal aspect ratios.</p></li>
+<li><p>Frame skipping logic (frame_idx % 2 == 0) to reduce processing.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MIN_AREA</span> <span class="o">=</span> <span class="mi">1500</span>
+<span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="n">area</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span><span class="p">)</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">area</span> <span class="o">&lt;</span> <span class="n">MIN_AREA</span> <span class="ow">or</span> <span class="n">ratio</span> <span class="o">&lt;</span> <span class="mf">0.2</span> <span class="ow">or</span> <span class="n">ratio</span> <span class="o">&gt;</span> <span class="mf">2.5</span><span class="p">:</span>
+        <span class="k">continue</span>  <span class="c1"># Skip noisy boxes</span>
+</pre></div>
+</div>
+<p>This ensures only reliable detections are passed for distance-angle processing.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ros_bag_conversion.html" class="btn btn-neutral float-left" title="ROS Bag to Video Conversion" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="evaluation_visualization.html" class="btn btn-neutral float-right" title="Evaluation and Visualization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, MD ASLAM ANSARI.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

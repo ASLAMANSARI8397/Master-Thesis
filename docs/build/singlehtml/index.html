@@ -1,0 +1,831 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>End-to-End Machine Learning Pipeline forDistance Estimation and Human-RobotInteraction in Autonomous Systems 1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=c64008d3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            End-to-End Machine Learning Pipeline forDistance Estimation and Human-RobotInteraction in Autonomous Systems
+          </a>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="#document-environment_setup">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#document-data_preprocessing">Data Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#document-model_training">Model Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#document-ros_bag_conversion">ROS Bag to Video Conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#document-distance_angle_estimation">Distance and Angle Estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#document-evaluation_visualization">Evaluation and Visualization</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">End-to-End Machine Learning Pipeline forDistance Estimation and Human-RobotInteraction in Autonomous Systems</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">End-to-End Machine Learning Pipeline forDistance Estimation and Human-RobotInteraction in Autonomous Systems 1 documentation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="end-to-end-machine-learning-pipeline-for-distance-estimation-and-human-robot-interaction-in-autonomous-systems">
+<h1>End-to-End Machine Learning Pipeline for Distance Estimation and Human-Robot Interaction in Autonomous Systems<a class="headerlink" href="#end-to-end-machine-learning-pipeline-for-distance-estimation-and-human-robot-interaction-in-autonomous-systems" title="Link to this heading"></a></h1>
+<p>In modern autonomous systems, ensuring safe and intelligent interaction between humans and robots is a growing necessity. This documentation introduces a fully integrated machine learning pipeline designed specifically for real-time distance estimation and interaction analysis between humans and robotic entities.</p>
+<p>The system processes video inputs to detect both people and robots, calculates key spatial parameters like distance and angle, and classifies safety risk zones. These insights are then visualized in an intuitive, color-coded format to support better decision-making in autonomous operations.</p>
+<section id="overview-of-the-system-architecture">
+<h2>Overview of the System Architecture<a class="headerlink" href="#overview-of-the-system-architecture" title="Link to this heading"></a></h2>
+<p>The pipeline is built on a modular, yet interconnected architecture, with each component responsible for a critical function:</p>
+<ul class="simple">
+<li><p>YOLOv8 Object Detection</p></li>
+<li><p>Distance Estimation (Depth-based or Focal Length Method)</p></li>
+<li><p>Angle Calculation based on Bounding Box Shift</p></li>
+<li><p>Multi-object Tracking (ID assignment and persistence)</p></li>
+<li><p>Risk Classification via Distance Thresholds</p></li>
+<li><p>CSV Logging and Interactive Visualization with Plotly</p></li>
+<li><p>ROS Bag to Video Conversion for retrospective frame analysis</p></li>
+</ul>
+<p>This robust setup allows the system to operate across varied environments while remaining scalable and maintainable.</p>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="_images/system_architecture.png"><img alt="Modular Architecture" src="_images/system_architecture.png" style="width: 80%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Modular System Architecture for Distance Estimation and Safety Zone Visualization</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="detection-and-spatial-estimation">
+<h2>Detection and Spatial Estimation<a class="headerlink" href="#detection-and-spatial-estimation" title="Link to this heading"></a></h2>
+<p>Using a fine-tuned YOLOv8 model trained on custom “person” and “robot” classes, the system detects objects in each frame. From these detections, it calculates:</p>
+<ul class="simple">
+<li><p><strong>Distance</strong>: Using focal length if no depth data is available</p></li>
+<li><p><strong>Angle</strong>: Based on horizontal deviation from the frame center</p></li>
+</ul>
+</section>
+<section id="real-time-safety-classification">
+<h2>Real-Time Safety Classification<a class="headerlink" href="#real-time-safety-classification" title="Link to this heading"></a></h2>
+<p>To assess proximity, the system applies a three-level color-coded safety logic:</p>
+<ul class="simple">
+<li><p><strong>Green Zone</strong>: Safe distance</p></li>
+<li><p><strong>Yellow Zone</strong>: Caution required</p></li>
+<li><p><strong>Red Zone</strong>: Critical proximity needing immediate attention</p></li>
+</ul>
+<p>This classification is visually reflected in both bounding boxes and connecting lines.</p>
+</section>
+<section id="tracking-and-logging">
+<h2>Tracking and Logging<a class="headerlink" href="#tracking-and-logging" title="Link to this heading"></a></h2>
+<p>An internal ID tracker ensures consistent labeling of individuals across frames, which supports:</p>
+<ul class="simple">
+<li><p>Person-specific temporal analysis</p></li>
+<li><p>Risk level progression over time</p></li>
+</ul>
+<p>Key metrics are saved into structured CSV logs containing:</p>
+<ul class="simple">
+<li><p>Timestamp</p></li>
+<li><p>Unique ID</p></li>
+<li><p>Distance (in cm)</p></li>
+<li><p>Angle (in degrees)</p></li>
+<li><p>Assigned Risk Zone</p></li>
+</ul>
+</section>
+<section id="visualization-and-insights">
+<h2>Visualization and Insights<a class="headerlink" href="#visualization-and-insights" title="Link to this heading"></a></h2>
+<p>The CSV data is transformed into interactive graphs using Plotly, allowing users to:</p>
+<ul class="simple">
+<li><p>Hover over individual points for insights</p></li>
+<li><p>View zone-based color overlays</p></li>
+<li><p>Smooth values for better temporal understanding</p></li>
+</ul>
+</section>
+<section id="ros-bag-integration">
+<h2>ROS Bag Integration<a class="headerlink" href="#ros-bag-integration" title="Link to this heading"></a></h2>
+<p>To accommodate robotics-specific data formats, the system includes a Docker-based ROS1 bag conversion module. This tool:</p>
+<ul class="simple">
+<li><p>Converts <cite>.bag</cite> files to image/video sequences</p></li>
+<li><p>Enables post-hoc analysis on recorded experiments</p></li>
+</ul>
+<p>The full pipeline is implemented in Python using libraries such as <strong>Ultralytics</strong>, <strong>OpenCV</strong>, <strong>NumPy</strong>, <strong>Pandas</strong>, and <strong>Plotly</strong>, ensuring reproducibility and extensibility.</p>
+<div class="toctree-wrapper compound">
+<span id="document-environment_setup"></span><section id="environment-setup">
+<h3>Environment Setup<a class="headerlink" href="#environment-setup" title="Link to this heading"></a></h3>
+<p>This section outlines the steps to set up the environment for running the full machine learning pipeline, including Python dependencies and Docker-based ROS bag conversion.</p>
+<section id="check-python-installation">
+<h4>1. Check Python Installation<a class="headerlink" href="#check-python-installation" title="Link to this heading"></a></h4>
+<p>Ensure Python 3 is installed:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>--version
+</pre></div>
+</div>
+<p>If not installed, download from <a class="reference external" href="https://www.python.org/downloads/">https://www.python.org/downloads/</a></p>
+</section>
+<section id="create-a-virtual-environment">
+<h4>2. Create a Virtual Environment<a class="headerlink" href="#create-a-virtual-environment" title="Link to this heading"></a></h4>
+<p>Use <cite>venv</cite> to isolate dependencies:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+</pre></div>
+</div>
+<p>Check that a <cite>venv</cite> folder appears:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>ls
+</pre></div>
+</div>
+<p>Expected output should include:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>venv/
+</pre></div>
+</div>
+</section>
+<section id="activate-the-virtual-environment">
+<h4>3. Activate the Virtual Environment<a class="headerlink" href="#activate-the-virtual-environment" title="Link to this heading"></a></h4>
+<p>Depending on OS:</p>
+<ul>
+<li><p>macOS/Linux:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>venv/bin/activate
+</pre></div>
+</div>
+</li>
+<li><p>Windows (cmd):</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>venv<span class="se">\S</span>cripts<span class="se">\a</span>ctivate
+</pre></div>
+</div>
+</li>
+<li><p>Windows (PowerShell):</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>.<span class="se">\v</span>env<span class="se">\S</span>cripts<span class="se">\A</span>ctivate.ps1
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="install-required-python-packages">
+<h4>4. Install Required Python Packages<a class="headerlink" href="#install-required-python-packages" title="Link to this heading"></a></h4>
+<p>Use the <cite>requirements.txt</cite> file:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+<p>If facing issues:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>--no-cache-dir<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+</section>
+<section id="docker-setup-for-ros-bag-conversion">
+<h4>5. Docker Setup for ROS Bag Conversion<a class="headerlink" href="#docker-setup-for-ros-bag-conversion" title="Link to this heading"></a></h4>
+<section id="check-docker-installation">
+<h5>5.1 Check Docker Installation<a class="headerlink" href="#check-docker-installation" title="Link to this heading"></a></h5>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>--version
+</pre></div>
+</div>
+<p>If not installed, download Docker Desktop: <a class="reference external" href="https://www.docker.com/products/docker-desktop">https://www.docker.com/products/docker-desktop</a></p>
+</section>
+<section id="verify-docker-is-running">
+<h5>5.2 Verify Docker is Running<a class="headerlink" href="#verify-docker-is-running" title="Link to this heading"></a></h5>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>info
+</pre></div>
+</div>
+</section>
+<section id="pull-ros-noetic-docker-image">
+<h5>5.3 Pull ROS Noetic Docker Image<a class="headerlink" href="#pull-ros-noetic-docker-image" title="Link to this heading"></a></h5>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>ros:noetic
+</pre></div>
+</div>
+</section>
+<section id="mount-external-drive-into-docker-container">
+<h5>5.4 Mount External Drive into Docker Container<a class="headerlink" href="#mount-external-drive-into-docker-container" title="Link to this heading"></a></h5>
+<p>Assuming your ROS bag files are in <cite>/Volumes/One_Touch</cite>:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--name<span class="w"> </span>ros_container<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--mount<span class="w"> </span><span class="nv">type</span><span class="o">=</span>bind,source<span class="o">=</span>/Volumes/One_Touch,target<span class="o">=</span>/rosbag_data<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>ros:noetic
+</pre></div>
+</div>
+</section>
+<section id="install-ros-tools-inside-container">
+<h5>5.5 Install ROS Tools Inside Container<a class="headerlink" href="#install-ros-tools-inside-container" title="Link to this heading"></a></h5>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>apt<span class="w"> </span>update
+apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>ros-noetic-image-view<span class="w"> </span>ffmpeg
+</pre></div>
+</div>
+<p>Make ROS auto-load:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;source /opt/ros/noetic/setup.bash&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+<span class="nb">source</span><span class="w"> </span>~/.bashrc
+</pre></div>
+</div>
+</section>
+<section id="verify-ros-installation">
+<h5>5.6 Verify ROS Installation<a class="headerlink" href="#verify-ros-installation" title="Link to this heading"></a></h5>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>roscore
+</pre></div>
+</div>
+<p>You should see the ROS master node running.</p>
+</section>
+</section>
+<section id="requirements-summary">
+<h4>Requirements Summary<a class="headerlink" href="#requirements-summary" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Python 3.10+</p></li>
+<li><p>Virtual environment (<cite>venv</cite>)</p></li>
+<li><p>Required packages:</p></li>
+</ul>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>ultralytics<span class="w"> </span>opencv-python<span class="w"> </span>numpy<span class="w"> </span>pandas<span class="w"> </span>plotly<span class="w"> </span>scipy
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Docker installed and running:</p></li>
+</ul>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>osrf/ros:noetic-desktop-full
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>No native ROS install required</p></li>
+<li><p>Optional developer tools:</p></li>
+</ul>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>black<span class="w"> </span>isort<span class="w"> </span>flake8
+</pre></div>
+</div>
+</section>
+<section id="purpose-of-this-setup">
+<h4>Purpose of this Setup<a class="headerlink" href="#purpose-of-this-setup" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Reproducible, isolated setup</p></li>
+<li><p>Clean dependency management</p></li>
+<li><p>OS-independent execution</p></li>
+<li><p>Enables Docker-based ROS workflows</p></li>
+</ul>
+<p>Ready to proceed to the next module after environment is set.</p>
+</section>
+</section>
+<span id="document-data_preprocessing"></span><section id="data-preprocessing">
+<span id="id1"></span><h3>Data Preprocessing<a class="headerlink" href="#data-preprocessing" title="Link to this heading"></a></h3>
+<p>This section covers all preprocessing steps required to prepare the dataset for training and evaluation. It includes directory structure setup, annotation strategies, image normalization, frame extraction, and augmentations.</p>
+<section id="dataset-structure-and-directory-layout">
+<h4>1 - Dataset Structure and Directory Layout<a class="headerlink" href="#dataset-structure-and-directory-layout" title="Link to this heading"></a></h4>
+<p>To maintain consistency and scalability, the dataset is organized into the following structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>project_folder/
+├── data/
+│   ├── images/        # All raw frames or extracted images
+│   ├── labels/        # Corresponding YOLO-format label files
+│   ├── val/           # Validation images + labels
+│   └── test/          # Optional test set
+└── dataset.yaml       # Dataset configuration file for YOLOv8
+</pre></div>
+</div>
+<p>All label files follow the YOLO annotation format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">class_id</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">x_center</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">y_center</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">width</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">height</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>All coordinates are normalized (between 0 and 1).</p>
+</section>
+<section id="annotation-using-labelme">
+<h4>2 - Annotation Using LabelMe<a class="headerlink" href="#annotation-using-labelme" title="Link to this heading"></a></h4>
+<p>LabelMe was chosen for manual annotation due to its ease of use and support for YOLO format conversion.</p>
+<p>To annotate:</p>
+<ol class="arabic simple">
+<li><p>Open LabelMe GUI.</p></li>
+<li><p>Draw bounding boxes over people and robots.</p></li>
+<li><p>Save annotations in JSON format.</p></li>
+<li><p>Use a script to convert JSON files to YOLO text files.</p></li>
+</ol>
+<p>Example conversion snippet:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>labelme2yolo.py<span class="w"> </span>--input<span class="w"> </span>./annotations<span class="w"> </span>--output<span class="w"> </span>./data/labels
+</pre></div>
+</div>
+</section>
+<section id="image-normalization-and-resizing">
+<h4>3 - Image Normalization and Resizing<a class="headerlink" href="#image-normalization-and-resizing" title="Link to this heading"></a></h4>
+<p>Before training, images are resized to match the YOLOv8 input size (e.g., 640x640). This ensures consistent model performance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;image.jpg&#39;</span><span class="p">)</span>
+<span class="n">img_resized</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">640</span><span class="p">,</span> <span class="mi">640</span><span class="p">))</span>
+<span class="n">img_normalized</span> <span class="o">=</span> <span class="n">img_resized</span> <span class="o">/</span> <span class="mf">255.0</span>
+</pre></div>
+</div>
+</section>
+<section id="frame-extraction-from-video">
+<h4>4 - Frame Extraction from Video<a class="headerlink" href="#frame-extraction-from-video" title="Link to this heading"></a></h4>
+<p>If starting from video data (e.g., from ROS bag conversion), extract frames at regular intervals using OpenCV:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="n">vidcap</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="s1">&#39;video.mp4&#39;</span><span class="p">)</span>
+<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">success</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="n">vidcap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="k">while</span> <span class="n">success</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">count</span> <span class="o">%</span> <span class="mi">15</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;data/images/frame_</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">.jpg&quot;</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>
+    <span class="n">success</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="n">vidcap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>This avoids redundancy and ensures temporal spacing in your training data.</p>
+</section>
+<section id="data-augmentation-techniques">
+<h4>5 - Data Augmentation Techniques<a class="headerlink" href="#data-augmentation-techniques" title="Link to this heading"></a></h4>
+<p>To improve generalization, various augmentations are applied using OpenCV and NumPy:</p>
+<ul class="simple">
+<li><p>Horizontal flip</p></li>
+<li><p>Gamma correction</p></li>
+<li><p>Brightness and contrast adjustment</p></li>
+<li><p>Rotation (if needed)</p></li>
+</ul>
+<p>Example: Horizontal flip and gamma correction</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="n">flipped</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.5</span>
+<span class="n">table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">i</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">)</span> <span class="o">**</span> <span class="n">gamma</span> <span class="o">*</span> <span class="mi">255</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span>
+<span class="n">corrected</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">LUT</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="data-validation">
+<h4>6 - Data Validation<a class="headerlink" href="#data-validation" title="Link to this heading"></a></h4>
+<p>A Python script was written to ensure:</p>
+<ul class="simple">
+<li><p>Every image has a matching label</p></li>
+<li><p>No empty label files</p></li>
+<li><p>All label files follow YOLO format (5 values per line)</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;data/images&quot;</span><span class="p">):</span>
+    <span class="n">label_file</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;data/labels/</span><span class="si">{</span><span class="n">label_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Missing label:&quot;</span><span class="p">,</span> <span class="n">label_file</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This ensures training stability and accurate evaluation.</p>
+</section>
+</section>
+<span id="document-model_training"></span><section id="model-training">
+<h3>Model Training<a class="headerlink" href="#model-training" title="Link to this heading"></a></h3>
+<p>This section explains in detail how the object detection model was trained for the distance and angle estimation system. The process includes dataset preparation, transfer learning using YOLOv8, configuration settings, training execution, and evaluation.</p>
+<section id="dataset-preparation-and-configuration">
+<h4>1 - Dataset Preparation and Configuration<a class="headerlink" href="#dataset-preparation-and-configuration" title="Link to this heading"></a></h4>
+<p>Before training, the dataset must be structured according to YOLO format:</p>
+<ul class="simple">
+<li><p>Images are stored in:
+- /images/train
+- /images/val</p></li>
+<li><p>Corresponding labels in:
+- /labels/train
+- /labels/val</p></li>
+</ul>
+<p>Each label file is a <cite>.txt</cite> file containing bounding boxes and class IDs in YOLO format.</p>
+<p>Create a configuration file called <cite>dataset.yaml</cite> with the following structure:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/absolute/path/to/dataset</span>
+<span class="nt">train</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">images/train</span>
+<span class="nt">val</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">images/val</span>
+<span class="nt">nc</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="nt">names</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;person&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;robot&#39;</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>Here:
+- <cite>nc</cite> is the number of classes.
+- <cite>names</cite> must match the class indices used during annotation.</p>
+</section>
+<section id="model-selection-and-transfer-learning-strategy">
+<h4>2 - Model Selection and Transfer Learning Strategy<a class="headerlink" href="#model-selection-and-transfer-learning-strategy" title="Link to this heading"></a></h4>
+<p>We use YOLOv8 (You Only Look Once version 8) from the <cite>ultralytics</cite> package for object detection due to its lightweight architecture and real-time performance.</p>
+<p>Instead of training from scratch, transfer learning is applied using a pre-trained base model:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>yolo<span class="w"> </span><span class="nv">task</span><span class="o">=</span>detect<span class="w"> </span><span class="nv">mode</span><span class="o">=</span>train<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">model</span><span class="o">=</span>robot.pt<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">data</span><span class="o">=</span>dataset.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">epochs</span><span class="o">=</span><span class="m">50</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">imgsz</span><span class="o">=</span><span class="m">640</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">batch</span><span class="o">=</span><span class="m">16</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">name</span><span class="o">=</span>yolov8_robot_train
+</pre></div>
+</div>
+<p>Here:
+- <cite>robot.pt</cite> is the checkpoint trained on a similar robotics dataset.
+- <cite>dataset.yaml</cite> provides training and validation splits.
+- <cite>imgsz</cite> controls input resolution.
+- <cite>batch</cite> is tuned based on available GPU memory.</p>
+</section>
+<section id="training-environment-setup">
+<h4>3 - Training Environment Setup<a class="headerlink" href="#training-environment-setup" title="Link to this heading"></a></h4>
+<p>Make sure you’re running training inside a virtual environment with <cite>ultralytics</cite> installed.</p>
+<p>Activate your environment and navigate to the training folder.
+Use the following command to install the training library if not already present:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>ultralytics
+</pre></div>
+</div>
+<p>If GPU support is enabled, ensure CUDA drivers are installed. Training will auto-switch to GPU if available.</p>
+</section>
+<section id="monitoring-training-metrics">
+<h4>4 - Monitoring Training Metrics<a class="headerlink" href="#monitoring-training-metrics" title="Link to this heading"></a></h4>
+<p>The training process outputs real-time metrics like:
+- Box loss
+- Class loss
+- <a class="reference external" href="mailto:mAP&#37;&#52;&#48;0&#46;5">mAP<span>&#64;</span>0<span>&#46;</span>5</a>
+- Precision / Recall</p>
+<p>After training, results will be available in the <cite>runs/detect/yolov8_robot_train</cite> folder.</p>
+<p>To visualize training curves:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>tensorboard<span class="w"> </span>--logdir<span class="w"> </span>runs/detect
+</pre></div>
+</div>
+<p>Open your browser at <cite>http://localhost:6006</cite> to view the metrics.</p>
+</section>
+<section id="exporting-the-trained-model">
+<h4>5 - Exporting the Trained Model<a class="headerlink" href="#exporting-the-trained-model" title="Link to this heading"></a></h4>
+<p>Once training is complete, export the best model weights as follows:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>yolo<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">model</span><span class="o">=</span>runs/detect/yolov8_robot_train/weights/best.pt<span class="w"> </span><span class="nv">format</span><span class="o">=</span>onnx
+</pre></div>
+</div>
+<p>This converts the PyTorch weights to ONNX for easier integration into ROS or other environments.</p>
+</section>
+<section id="evaluate-model-on-validation-data">
+<h4>6 - Evaluate Model on Validation Data<a class="headerlink" href="#evaluate-model-on-validation-data" title="Link to this heading"></a></h4>
+<p>To test the trained model on new data:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>yolo<span class="w"> </span><span class="nv">task</span><span class="o">=</span>detect<span class="w"> </span><span class="nv">mode</span><span class="o">=</span>val<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">model</span><span class="o">=</span>runs/detect/yolov8_robot_train/weights/best.pt<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span><span class="nv">data</span><span class="o">=</span>dataset.yaml
+</pre></div>
+</div>
+<p>You will receive evaluation metrics including mAP, precision, and recall.</p>
+<p>This concludes the full training workflow for your real-time detection system.</p>
+</section>
+</section>
+<span id="document-ros_bag_conversion"></span><section id="ros-bag-to-video-conversion">
+<h3>ROS Bag to Video Conversion<a class="headerlink" href="#ros-bag-to-video-conversion" title="Link to this heading"></a></h3>
+<p>This section provides a complete guide to extract image frames from a <cite>.bag</cite> file and convert them into a playable video using ROS tools. The workflow is tailored for macOS with Docker and supports <cite>.bag</cite> files stored on an external hard drive.</p>
+<section id="verify-external-hard-drive-mount">
+<h4>1. Verify External Hard Drive Mount<a class="headerlink" href="#verify-external-hard-drive-mount" title="Link to this heading"></a></h4>
+<p>Ensure your external drive (e.g., <cite>One_Touch</cite>) is mounted. To check available drives, run:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>ls<span class="w"> </span>/Volumes
+</pre></div>
+</div>
+<p>You should see your external drive listed, such as:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>One_Touch
+</pre></div>
+</div>
+</section>
+<section id="create-and-launch-docker-container">
+<h4>2. Create and Launch Docker Container<a class="headerlink" href="#create-and-launch-docker-container" title="Link to this heading"></a></h4>
+<p>Mount your external drive into the Docker container at <cite>/rosbag_data</cite>:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--name<span class="w"> </span>ros_container<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--mount<span class="w"> </span><span class="nv">type</span><span class="o">=</span>bind,source<span class="o">=</span>/Volumes/One_Touch,target<span class="o">=</span>/rosbag_data<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>ros:noetic
+</pre></div>
+</div>
+<p>This launches a container named <cite>ros_container</cite> and mounts your external hard drive into it.</p>
+</section>
+<section id="install-ros-tools-in-container">
+<h4>3. Install ROS Tools in Container<a class="headerlink" href="#install-ros-tools-in-container" title="Link to this heading"></a></h4>
+<p>Once inside the container, install the tools for image extraction and video conversion:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>apt<span class="w"> </span>update
+apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>ros-noetic-image-view<span class="w"> </span>ffmpeg
+</pre></div>
+</div>
+<p>To persist the ROS environment across sessions:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;source /opt/ros/noetic/setup.bash&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+<span class="nb">source</span><span class="w"> </span>~/.bashrc
+</pre></div>
+</div>
+</section>
+<section id="check-ros-bag-info">
+<h4>4. Check ROS Bag Info<a class="headerlink" href="#check-ros-bag-info" title="Link to this heading"></a></h4>
+<p>Use <cite>rosbag info</cite> to inspect the file and confirm the image topic:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>rosbag<span class="w"> </span>info<span class="w"> </span>/rosbag_data/your_file.bag
+</pre></div>
+</div>
+<p>Look for the correct topic such as <cite>/camera/image_raw</cite>.</p>
+</section>
+<section id="start-ros-core-and-play-bag-file">
+<h4>5. Start ROS Core and Play Bag File<a class="headerlink" href="#start-ros-core-and-play-bag-file" title="Link to this heading"></a></h4>
+<p>In <strong>Terminal #1</strong> (Docker container):</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>roscore
+</pre></div>
+</div>
+<p>In <strong>Terminal #2</strong> (another Docker terminal):</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>rosbag<span class="w"> </span>play<span class="w"> </span>/rosbag_data/your_file.bag<span class="w"> </span>--clock
+</pre></div>
+</div>
+</section>
+<section id="extract-images-from-ros-bag">
+<h4>6. Extract Images from ROS Bag<a class="headerlink" href="#extract-images-from-ros-bag" title="Link to this heading"></a></h4>
+<p>In <strong>Terminal #3</strong> (same Docker container), create output folder:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>/rosbag_data/output_images
+</pre></div>
+</div>
+<p>Run the image extraction tool:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>rosrun<span class="w"> </span>image_view<span class="w"> </span>extract_images<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>_filename_format:<span class="o">=</span>frame%04d.jpg<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>image:<span class="o">=</span>/camera/image_raw<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>_sec_per_frame:<span class="o">=</span><span class="m">0</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>_output_folder:<span class="o">=</span>/rosbag_data/output_images
+</pre></div>
+</div>
+<p>This will save all frames from the <cite>.bag</cite> file as images.</p>
+</section>
+<section id="convert-extracted-images-to-video">
+<h4>7. Convert Extracted Images to Video<a class="headerlink" href="#convert-extracted-images-to-video" title="Link to this heading"></a></h4>
+<p>Use <cite>ffmpeg</cite> to convert extracted frames into a video:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/rosbag_data/output_images
+ffmpeg<span class="w"> </span>-framerate<span class="w"> </span><span class="m">10</span><span class="w"> </span>-i<span class="w"> </span>frame%04d.jpg<span class="w"> </span>-c:v<span class="w"> </span>libx264<span class="w"> </span>-pix_fmt<span class="w"> </span>yuv420p<span class="w"> </span>output_video.mp4
+</pre></div>
+</div>
+<p>This creates <cite>output_video.mp4</cite> from the extracted frames.</p>
+</section>
+<section id="copy-video-to-host-system">
+<h4>8. Copy Video to Host System<a class="headerlink" href="#copy-video-to-host-system" title="Link to this heading"></a></h4>
+<p>To copy the video file from the container to your host macOS system:</p>
+<p>In a new macOS terminal, find the container ID:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>ps
+</pre></div>
+</div>
+<p>Then use:</p>
+<div class="code-block-green highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>cp<span class="w"> </span>ros_container:/rosbag_data/output_images/output_video.mp4<span class="w"> </span>~/Desktop/
+</pre></div>
+</div>
+<p>This copies the video to your Desktop.</p>
+</section>
+</section>
+<span id="document-distance_angle_estimation"></span><section id="distance-and-angle-estimation">
+<h3>Distance and Angle Estimation<a class="headerlink" href="#distance-and-angle-estimation" title="Link to this heading"></a></h3>
+<p>This section explains the complete logic behind estimating both camera-to-person distance and person-to-robot spatial angle using RealSense video input. The system uses two YOLO models simultaneously to detect humans and robots in each frame, enabling real-time spatial awareness.</p>
+<p>All steps are implemented using Python, OpenCV, NumPy, and a depth data file extracted from RealSense camera (.npy). This module is standalone and does not require any webcam or ROS install.</p>
+<section id="dual-yolo-model-architecture">
+<h4>1. Dual YOLO Model Architecture<a class="headerlink" href="#dual-yolo-model-architecture" title="Link to this heading"></a></h4>
+<p>To differentiate between people and robots, the system runs two YOLOv8 models in parallel:</p>
+<ul class="simple">
+<li><p>One model trained to detect person class (e.g., yolov8n.pt)</p></li>
+<li><p>One fine-tuned YOLO model trained to detect robots (e.g., robot.pt)</p></li>
+</ul>
+<p>Each model processes the same RealSense video frame in every iteration.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ultralytics</span><span class="w"> </span><span class="kn">import</span> <span class="n">YOLO</span>
+<span class="n">person_model</span> <span class="o">=</span> <span class="n">YOLO</span><span class="p">(</span><span class="s2">&quot;yolov8n.pt&quot;</span><span class="p">)</span>  <span class="c1"># Detects humans</span>
+<span class="n">robot_model</span> <span class="o">=</span> <span class="n">YOLO</span><span class="p">(</span><span class="s2">&quot;robot.pt&quot;</span><span class="p">)</span>      <span class="c1"># Detects robots</span>
+</pre></div>
+</div>
+</section>
+<section id="realsense-video-input-handling">
+<h4>2. RealSense Video Input Handling<a class="headerlink" href="#realsense-video-input-handling" title="Link to this heading"></a></h4>
+<p>Instead of a webcam, this module uses a pre-recorded RealSense video file (e.g., .mp4) and a corresponding depth map in <cite>.npy</cite> format extracted frame-wise.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="s2">&quot;input_video.mp4&quot;</span><span class="p">)</span>
+<span class="n">depth_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;depth_array.npy&quot;</span><span class="p">)</span>  <span class="c1"># Shape: (N, H, W)</span>
+</pre></div>
+</div>
+<p>Each frame from cap.read() is paired with a depth map from the .npy file for accurate spatial estimation.</p>
+</section>
+<section id="camera-to-person-distance-estimation">
+<h4>3. Camera-to-Person Distance Estimation<a class="headerlink" href="#camera-to-person-distance-estimation" title="Link to this heading"></a></h4>
+<p>To estimate the distance from the camera to a person:</p>
+<ul class="simple">
+<li><p>Use the bounding box center (cx, cy) of each detected person.</p></li>
+<li><p>Extract the depth value from the RealSense .npy array at that pixel.</p></li>
+<li><p>Ignore any zero or extreme values using filtering.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">x1</span> <span class="o">+</span> <span class="n">x2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">cy</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">y1</span> <span class="o">+</span> <span class="n">y2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">raw_distance</span> <span class="o">=</span> <span class="n">depth_data</span><span class="p">[</span><span class="n">frame_idx</span><span class="p">][</span><span class="n">cy</span><span class="p">][</span><span class="n">cx</span><span class="p">]</span>
+<span class="k">if</span> <span class="mi">20</span> <span class="o">&lt;</span> <span class="n">raw_distance</span> <span class="o">&lt;</span> <span class="mi">400</span><span class="p">:</span>  <span class="c1"># cm</span>
+    <span class="n">final_distance</span> <span class="o">=</span> <span class="n">raw_distance</span>
+</pre></div>
+</div>
+<p>The result is a stable, per-person distance from the camera.</p>
+</section>
+<section id="angle-estimation-logic">
+<h4>4. Angle Estimation Logic<a class="headerlink" href="#angle-estimation-logic" title="Link to this heading"></a></h4>
+<p>The horizontal angle between the detected person and the camera center is computed using focal length and pixel offset.</p>
+<p>The formula:</p>
+<div class="math notranslate nohighlight">
+\[\theta = \arctan\left( \frac{x - c_x}{f_x} \right)\]</div>
+<p>Where:
+- <span class="math notranslate nohighlight">\(x\)</span> is the x-coordinate of bounding box center
+- <span class="math notranslate nohighlight">\(c_x\)</span> is the image center in x-axis (frame.shape[1] / 2)
+- <span class="math notranslate nohighlight">\(f_x\)</span> is focal length in pixels (RealSense: e.g., 604.8672)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fx</span> <span class="o">=</span> <span class="mf">604.8672</span>
+<span class="n">image_center_x</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">((</span><span class="n">cx</span> <span class="o">-</span> <span class="n">image_center_x</span><span class="p">)</span> <span class="o">/</span> <span class="n">fx</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This gives angle in degrees, with negative = left, positive = right.</p>
+</section>
+<section id="robot-localization-using-person-id">
+<h4>5. Robot Localization using Person ID<a class="headerlink" href="#robot-localization-using-person-id" title="Link to this heading"></a></h4>
+<p>Once both persons and robots are detected in a frame:</p>
+<ul class="simple">
+<li><p>Assign each detection a unique ID using position tracking.</p></li>
+<li><p>Map each robot to the nearest person in angle space (same frame).</p></li>
+<li><p>Calculate the relative angle and distance between person and robot.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">distance</span>
+<span class="k">for</span> <span class="n">robot</span> <span class="ow">in</span> <span class="n">robots</span><span class="p">:</span>
+    <span class="n">r_angle</span> <span class="o">=</span> <span class="n">robot</span><span class="p">[</span><span class="s2">&quot;angle&quot;</span><span class="p">]</span>
+    <span class="n">nearest_person</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">persons</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;angle&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">r_angle</span><span class="p">))</span>
+    <span class="n">dist_cm</span> <span class="o">=</span> <span class="n">distance</span><span class="o">.</span><span class="n">euclidean</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">robot</span><span class="p">[</span><span class="s2">&quot;cx&quot;</span><span class="p">],</span> <span class="n">robot</span><span class="p">[</span><span class="s2">&quot;cy&quot;</span><span class="p">]),</span> <span class="p">(</span><span class="n">nearest_person</span><span class="p">[</span><span class="s2">&quot;cx&quot;</span><span class="p">],</span> <span class="n">nearest_person</span><span class="p">[</span><span class="s2">&quot;cy&quot;</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">dist_cm</span> <span class="o">&lt;</span> <span class="n">MAX_VALID_DISTANCE</span><span class="p">:</span>
+        <span class="c1"># Log person-robot proximity</span>
+        <span class="n">spatial_map</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">&quot;frame&quot;</span><span class="p">:</span> <span class="n">frame_idx</span><span class="p">,</span>
+            <span class="s2">&quot;person_id&quot;</span><span class="p">:</span> <span class="n">nearest_person</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;robot_id&quot;</span><span class="p">:</span> <span class="n">robot</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;angle&quot;</span><span class="p">:</span> <span class="n">r_angle</span><span class="p">,</span>
+            <span class="s2">&quot;distance&quot;</span><span class="p">:</span> <span class="n">dist_cm</span>
+        <span class="p">})</span>
+</pre></div>
+</div>
+<p>This logic allows continuous tracking of person-robot spatial relations.</p>
+</section>
+<section id="filtering-and-validation-rules">
+<h4>6. Filtering and Validation Rules<a class="headerlink" href="#filtering-and-validation-rules" title="Link to this heading"></a></h4>
+<p>To improve real-time usability, the following filtering steps are applied:</p>
+<ul class="simple">
+<li><p>Discard frames where no valid depth is found (depth == 0 or &gt; 500cm).</p></li>
+<li><p>Filter out boxes that are too small or have abnormal aspect ratios.</p></li>
+<li><p>Frame skipping logic (frame_idx % 2 == 0) to reduce processing.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MIN_AREA</span> <span class="o">=</span> <span class="mi">1500</span>
+<span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="n">area</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span><span class="p">)</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">area</span> <span class="o">&lt;</span> <span class="n">MIN_AREA</span> <span class="ow">or</span> <span class="n">ratio</span> <span class="o">&lt;</span> <span class="mf">0.2</span> <span class="ow">or</span> <span class="n">ratio</span> <span class="o">&gt;</span> <span class="mf">2.5</span><span class="p">:</span>
+        <span class="k">continue</span>  <span class="c1"># Skip noisy boxes</span>
+</pre></div>
+</div>
+<p>This ensures only reliable detections are passed for distance-angle processing.</p>
+</section>
+</section>
+<span id="document-evaluation_visualization"></span><section id="evaluation-and-visualization">
+<span id="evaluation-visualization"></span><h3>Evaluation and Visualization<a class="headerlink" href="#evaluation-and-visualization" title="Link to this heading"></a></h3>
+<p>This module handles the visual analysis and graphical validation of the distance-angle estimation logic. After extracting the spatial data (person ID, distance, and angle per frame), the data is exported to a CSV and then visualized using Plotly.</p>
+<p>Color-coded danger zones and real-time tracking visualizations are generated to ensure spatial safety analysis is both interpretable and actionable.</p>
+<section id="csv-output-structure-and-logging-logic">
+<h4>1. CSV Output Structure and Logging Logic<a class="headerlink" href="#csv-output-structure-and-logging-logic" title="Link to this heading"></a></h4>
+<p>During frame-by-frame processing, valid detections are logged into a CSV file with the following columns:</p>
+<ul class="simple">
+<li><p><cite>timestamp</cite>: Frame number or time-based key</p></li>
+<li><p><cite>person_id</cite>: Unique identifier for each tracked person</p></li>
+<li><p><cite>distance_cm</cite>: Distance from camera to person</p></li>
+<li><p><cite>angle_deg</cite>: Horizontal angle from image center</p></li>
+</ul>
+<p>Example code snippet:</p>
+<div class="code-block-green highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">csv_log</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">csv_log</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+    <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">frame_idx</span><span class="p">,</span>
+    <span class="s2">&quot;person_id&quot;</span><span class="p">:</span> <span class="n">person_id</span><span class="p">,</span>
+    <span class="s2">&quot;distance_cm&quot;</span><span class="p">:</span> <span class="n">final_distance</span><span class="p">,</span>
+    <span class="s2">&quot;angle_deg&quot;</span><span class="p">:</span> <span class="n">angle</span>
+<span class="p">})</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">csv_log</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;output_data.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This file serves as the input to the interactive visualization phase.</p>
+</section>
+<section id="plotly-visualization-with-danger-zones">
+<h4>2. Plotly Visualization with Danger Zones<a class="headerlink" href="#plotly-visualization-with-danger-zones" title="Link to this heading"></a></h4>
+<p>The system uses Plotly Express to create a dynamic scatter plot of person location over time:</p>
+<ul class="simple">
+<li><p>X-axis: angle_deg</p></li>
+<li><p>Y-axis: distance_cm</p></li>
+<li><p>Color: Encodes proximity-based safety zone</p></li>
+</ul>
+<p>Zone coloring logic:</p>
+<ul class="simple">
+<li><p>Red: distance &lt; 100 cm (Danger zone)</p></li>
+<li><p>Yellow: 100-200 cm (Caution)</p></li>
+<li><p>Green: &gt; 200 cm (Safe)</p></li>
+</ul>
+<div class="code-block-green highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">classify_zone</span><span class="p">(</span><span class="n">distance</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">distance</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Danger&quot;</span>
+    <span class="k">elif</span> <span class="n">distance</span> <span class="o">&lt;</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Caution&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Safe&quot;</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;zone&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;distance_cm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">classify_zone</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.express</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">px</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;angle_deg&quot;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;distance_cm&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;zone&quot;</span><span class="p">,</span>
+    <span class="n">hover_data</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;person_id&quot;</span><span class="p">,</span> <span class="s2">&quot;distance_cm&quot;</span><span class="p">,</span> <span class="s2">&quot;angle_deg&quot;</span><span class="p">],</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Distance vs Angle (Color-Coded Zones)&quot;</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="hover-tooltips-for-tracking-analysis">
+<h4>3. Hover Tooltips for Tracking Analysis<a class="headerlink" href="#hover-tooltips-for-tracking-analysis" title="Link to this heading"></a></h4>
+<p>Each point in the Plotly chart includes hover tooltips with:</p>
+<ul class="simple">
+<li><p>Person ID</p></li>
+<li><p>Frame timestamp</p></li>
+<li><p>Distance (in cm)</p></li>
+<li><p>Angle (in degrees)</p></li>
+</ul>
+<p>This enables frame-wise tracking of an individual’s position over time and highlights who entered the danger zone.</p>
+<div class="code-block-green highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hover_data</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;person_id&quot;</span><span class="p">,</span> <span class="s2">&quot;distance_cm&quot;</span><span class="p">,</span> <span class="s2">&quot;angle_deg&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>This feature makes the analysis extremely intuitive and interpretable even for non-technical stakeholders.</p>
+</section>
+<section id="smoothing-logic-with-moving-average">
+<h4>4. Smoothing Logic with Moving Average<a class="headerlink" href="#smoothing-logic-with-moving-average" title="Link to this heading"></a></h4>
+<p>To reduce frame-by-frame noise and improve clarity, the system applies a moving average smoothing filter:</p>
+<ul class="simple">
+<li><p>Smooths jitter in distance and angle readings</p></li>
+<li><p>Helps highlight true entry/exit trends from the danger zone</p></li>
+</ul>
+<div class="code-block-green highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;distance_smoothed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;distance_cm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;angle_smoothed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;angle_deg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;angle_smoothed&quot;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;distance_smoothed&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;zone&quot;</span><span class="p">,</span>
+    <span class="n">hover_data</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;person_id&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The smoothing window (window=5) can be tuned based on the frame rate.</p>
+</section>
+<section id="summary-of-visualization-logic">
+<h4>5. Summary of Visualization Logic<a class="headerlink" href="#summary-of-visualization-logic" title="Link to this heading"></a></h4>
+<p>This module provides the final visual feedback layer for the system:</p>
+<ul class="simple">
+<li><p>CSV export from real-time spatial logic</p></li>
+<li><p>Color-coded danger zone classification</p></li>
+<li><p>Interactive Plotly plots for spatial insight</p></li>
+<li><p>Hover tooltips for per-frame analysis</p></li>
+<li><p>Optional smoothing for better trend clarity</p></li>
+</ul>
+<p>This visual layer is essential for stakeholders to understand spatial safety in complex environments, especially in multi-human and robot-interacting systems.</p>
+</section>
+</section>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, MD ASLAM ANSARI.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
